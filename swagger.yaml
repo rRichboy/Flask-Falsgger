@@ -1,0 +1,624 @@
+swagger: '2.0'
+info:
+  title: API
+  description: Питон4ик имба
+  version: '1.0'
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+tags:
+  - name: Sensors
+  - name: Measurement Type
+  - name: Meteostations
+  - name: Sensors Measurements
+  - name: Meteostations sensors
+  - name: Measurements
+
+
+paths:
+  /sensor:
+    get:
+      summary: Get all sensors
+      tags: [ Sensors ]
+      responses:
+        200:
+          description: Successful request
+        404:
+          description: Sensors not found
+
+    post:
+      summary: Create a new sensor
+      tags: [ Sensors ]
+      parameters:
+        - in: body
+          name: body
+          description: Sensor object
+          required: true
+          schema:
+            type: object
+            properties:
+              sensor_name:
+                type: string
+                example: "Sensor 1"
+              sensors_measurements:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_id:
+                      type: integer
+                      example: 1
+                    type_formula:
+                      type: string
+                      example: "Value"
+
+      responses:
+        201:
+          description: Sensor successfully created
+        400:
+          description: Bad request
+
+  /sensor/{sensor_id}:
+    get:
+      summary: Get a sensor by ID
+      tags: [ Sensors ]
+      parameters:
+        - name: sensor_id
+          in: path
+          description: ID of the sensor to retrieve information for
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Successful request
+        404:
+          description: Sensor not found
+
+  /sensor/update/{sensor_id}:
+    put:
+      summary: Update a sensor by ID
+      tags: [ Sensors ]
+      parameters:
+        - name: sensor_id
+          in: path
+          description: ID of the sensor to update
+          required: true
+          type: integer
+        - in: body
+          name: body
+          description: New name for the sensor
+          required: true
+          schema:
+            type: object
+            properties:
+              sensor_name:
+                type: string
+      consumes:
+        - application/json
+      responses:
+        200:
+          description: Sensor successfully updated
+        400:
+          description: Bad request
+
+  /sensor/delete/{sensor_id}:
+    delete:
+      summary: Delete a sensor by ID
+      tags: [ Sensors ]
+      parameters:
+        - name: sensor_id
+          in: path
+          description: ID of the sensor to delete
+          required: true
+          type: integer
+      responses:
+        204:
+          description: Sensor successfully deleted
+        404:
+          description: Sensor not found
+
+  /sensor/{sensor_id}/type:
+    get:
+      summary: Get sensor types by ID
+      tags: [ Sensors ]
+      parameters:
+        - name: sensor_id
+          in: path
+          description: ID of the sensor to retrieve types for
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Successful request
+        404:
+          description: No sensor types found for this sensor
+  /measurement_type:
+    post:
+      summary: Create a new measurement type
+      tags: [ Measurement Type ]
+      parameters:
+        - in: body
+          name: body
+          description: Measurement type object
+          required: true
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              name:
+                type: string
+                example: "Temperature"
+              units:
+                type: string
+                example: "Celsius"
+      responses:
+        201:
+          description: Measurement type successfully created
+        400:
+          description: Bad request
+
+
+    get:
+      summary: Get all measurement types
+      tags: [ Measurement Type ]
+      responses:
+        200:
+          description: Successful request
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+                units:
+                  type: string
+        404:
+          description: Measurement types not found
+
+  /measurement_type/{type_id}:
+    put:
+      summary: Update a measurement type by ID
+      tags: [ Measurement Type ]
+      parameters:
+        - name: type_id
+          in: path
+          description: ID of the measurement type to update
+          required: true
+          type: integer
+        - in: body
+          name: body
+          description: New measurement type object
+          required: true
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                example: "temp"
+              units:
+                type: string
+                example: "cels"
+
+      responses:
+        200:
+          description: Measurement type successfully updated
+        400:
+          description: Bad request
+
+    delete:
+      summary: Delete a measurement type by ID
+      tags: [ Measurement Type ]
+      parameters:
+        - name: type_id
+          in: path
+          description: ID of the measurement type to delete
+          required: true
+          type: integer
+      responses:
+        204:
+          description: Measurement type successfully deleted
+        404:
+          description: Measurement type not found
+
+  /meteostation:
+    get:
+      summary: Get all meteostations
+      tags: [ Meteostations ]
+      responses:
+        200:
+          description: List of all meteostations
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+                longitude:
+                  type: number
+                  format: float
+                latitude:
+                  type: number
+                  format: float
+        404:
+          description: Meteostations not found
+
+    post:
+      summary: Create a new meteostation
+      tags: [ Meteostations ]
+      parameters:
+        - in: body
+          name: body
+          description: Meteostation object
+          required: true
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                example: "Meteostation 1"
+              longitude:
+                type: number
+                format: float
+                example: 40.7128
+              latitude:
+                type: number
+                format: float
+                example: -74.0060
+      responses:
+        201:
+          description: Meteostation successfully created
+        400:
+          description: Bad request
+
+  /meteostation/{station_id}:
+    get:
+      summary: Get a meteostation by ID
+      tags: [ Meteostations ]
+      parameters:
+        - name: station_id
+          in: path
+          description: ID of the meteostation to retrieve information for
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Meteostation object
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              longitude:
+                type: number
+                format: float
+              latitude:
+                type: number
+                format: float
+        404:
+          description: Meteostation not found
+
+    put:
+      summary: Update a meteostation by ID
+      tags: [ Meteostations ]
+      parameters:
+        - name: station_id
+          in: path
+          description: ID of the meteostation to update
+          required: true
+          type: integer
+        - in: body
+          name: body
+          description: New meteostation details
+          required: true
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              longitude:
+                type: number
+                format: float
+              latitude:
+                type: number
+                format: float
+      responses:
+        200:
+          description: Meteostation successfully updated
+        400:
+          description: Bad request
+
+    delete:
+      summary: Delete a meteostation by ID
+      tags: [ Meteostations ]
+      parameters:
+        - name: station_id
+          in: path
+          description: ID of the meteostation to delete
+          required: true
+          type: integer
+      responses:
+        204:
+          description: Meteostation successfully deleted
+        404:
+          description: Meteostation not found
+
+  /meteostation/{station_id}/sensor:
+    get:
+      summary: Get sensors by station ID
+      tags: [ Meteostations ]
+      parameters:
+        - name: station_id
+          in: path
+          description: ID of the meteostation to retrieve sensors for
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Successful request
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+        404:
+          description: No sensors found for this station
+
+  /sensors_measurements/{sensor_id}/:
+    post:
+      summary: Add measurements to a sensor
+      tags: [ Sensors Measurements ]
+      parameters:
+        - name: sensor_id
+          in: path
+          description: ID of the sensor to add measurements to
+          required: true
+          type: integer
+        - in: body
+          name: body
+          description: Measurements to be added
+          required: true
+          schema:
+            type: object
+            properties:
+              sensors_measurements:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_id:
+                      type: integer
+                      example: 123
+                    type_formula:
+                      type: string
+                      example: "ax^2"
+      responses:
+        201:
+          description: Measurements successfully added
+        400:
+          description: Bad request
+
+    delete:
+      summary: Delete measurements from a sensor
+      tags: [ Sensors Measurements ]
+      parameters:
+        - name: sensor_id
+          in: path
+          description: ID of the sensor to delete measurements from
+          required: true
+          type: integer
+        - in: body
+          name: body
+          description: Measurements to be deleted
+          required: true
+          schema:
+            type: object
+            properties:
+              measurements_type:
+                type: array
+                items:
+                  type: integer
+                  example: 123
+      responses:
+        204:
+          description: Measurements successfully deleted
+        400:
+          description: Bad request
+
+  /meteostations_sensors/:
+    post:
+      summary: Add new sensors to meteostations
+      tags: [ Meteostations sensors ]
+      parameters:
+        - in: body
+          name: body
+          description: Meteostation sensors object
+          required: true
+          schema:
+            type: object
+            properties:
+              meteostations_sensors:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    station_id:
+                      type: integer
+                      example: 123
+                    sensor_id:
+                      type: integer
+                      example: 321
+                    added_ts:
+                      type: string
+                      format: date-time
+                      example: "2024-02-12"
+      responses:
+        201:
+          description: Sensors successfully added to meteostations
+        400:
+          description: Bad request
+
+    get:
+      summary: Get all sensors in meteostations
+      tags: [ Meteostations sensors ]
+      responses:
+        200:
+          description: List of all sensors in meteostations
+          schema:
+            type: object
+            properties:
+              meteostations_sensors:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    inventory_number:
+                      type: integer
+                    station_id:
+                      type: integer
+                    sensor_id:
+                      type: integer
+                    added_ts:
+                      type: string
+                      format: date-time
+                    removed_ts:
+                      type: string
+                      format: date-time
+        400:
+          description: Bad request
+
+  /meteostations_sensors/{sensor_inventory_number}/removed_ts:
+    put:
+      summary: Remove a sensor from a meteostation
+      tags: [ Meteostations sensors ]
+      parameters:
+        - name: sensor_inventory_number
+          in: path
+          description: Inventory number of the sensor to be removed
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Removal timestamp
+          required: false
+          schema:
+            type: object
+            properties:
+              removed_ts:
+                type: string
+                format: date-time
+                example: "2024-02-26"
+      responses:
+        200:
+          description: Sensor successfully removed
+        400:
+          description: Bad request
+
+  /measurements:
+    post:
+      summary: Add new measurements
+      tags: [ Measurements ]
+      parameters:
+        - in: body
+          name: body
+          description: Array of measurements
+          required: true
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                sensor_inventory_number:
+                  type: integer
+                  example: 1
+                value:
+                  type: number
+                  format: float
+                  example: 23.5
+                ts:
+                  type: string
+                  format: date-time
+                  example: "2024-02-12T15:30:00Z"
+                type:
+                  type: string
+                  example: "temperature"
+      responses:
+        201:
+          description: Measurements successfully added
+        400:
+          description: Bad request
+
+    get:
+      summary: Get measurements with optional conditions
+      tags: [ Measurements ]
+      parameters:
+        - name: meteostation
+          in: query
+          description: ID of the meteostation
+          required: false
+          type: integer
+        - name: sensor
+          in: query
+          description: ID of the sensor
+          required: false
+          type: integer
+      responses:
+        200:
+          description: List of measurements
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                sensor_inventory_number:
+                  type: integer
+                value:
+                  type: number
+                  format: float
+                ts:
+                  type: string
+                  format: date-time
+                type:
+                  type: string
+        400:
+          description: Bad request
+  /measurements/all:
+    get:
+      summary: Get all measurements
+      tags: [ Measurements ]
+      responses:
+        200:
+          description: List of all measurements
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                sensor_inventory_number:
+                  type: integer
+                value:
+                  type: number
+                  format: float
+                ts:
+                  type: string
+                  format: date-time
+                type:
+                  type: string
+        400:
+          description: Bad request
